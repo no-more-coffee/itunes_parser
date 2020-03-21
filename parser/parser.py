@@ -2,27 +2,22 @@ import sys
 from collections import deque
 from xml.etree import ElementTree
 
-from dateutil.parser import parse
+from dateutil.parser import parse as date_parse
+
+type_parsers = {
+    'dict': lambda e: dict(pop_dict_items(e)),
+    'string': lambda e: e.text,
+    'date': lambda e: date_parse(e.text),
+    'integer': lambda e: int(e.text),
+    'true': lambda e: True,
+    'false': lambda e: False,
+    'array': lambda e: pop_array_items(e),
+    'data': lambda e: None,
+}
 
 
 def parse_value(e):
-    if e.tag == 'dict':
-        return dict(pop_dict_items(e))
-    if e.tag == 'string':
-        return e.text
-    if e.tag == 'date':
-        return parse(e.text)
-    if e.tag == 'integer':
-        return int(e.text)
-    if e.tag == 'true':
-        return True
-    if e.tag == 'false':
-        return False
-    if e.tag == 'array':
-        return pop_array_items(e)
-    if e.tag == 'data':
-        return
-    raise NotImplementedError(f'Unknown tag {e.tag}')
+    return type_parsers[e.tag](e)
 
 
 def pop_array_items(e):
@@ -46,7 +41,8 @@ def main(*args):
     root_dict = root[0]
 
     data = parse_value(root_dict)
-    print(len(data))
+    # print(data.get('Tracks'))
+    print([p.get('Name') for p in data.get('Playlists')])
 
 
 if __name__ == '__main__':
