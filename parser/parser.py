@@ -1,5 +1,6 @@
 import sys
 from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
 
 from dateutil.parser import parse as date_parse
 
@@ -32,6 +33,21 @@ def pop_dict_items(dict_element):
         yield k.text, parse_value(v)
 
 
+def get_element_for_name(parent: Element, name: str) -> Element:
+    it = iter(parent)
+    for e in it:
+        if e.text == name:
+            return next(it)
+
+
+def get_tracks(parent: Element) -> Element:
+    return get_element_for_name(parent, 'Tracks')
+
+
+def get_playlists(parent: Element) -> Element:
+    return get_element_for_name(parent, 'Playlists')
+
+
 def main(*args):
     library_xml_path, *_ = args
 
@@ -40,9 +56,13 @@ def main(*args):
     root = tree.getroot()
     root_dict = root[0]
 
+    # Get tracks or playlists exclusively
+    # tracks_element = get_tracks(root_dict)
+    # tracks = parse_value(tracks_element)
+
     data = parse_value(root_dict)
-    # print(data.get('Tracks'))
-    print([p.get('Name') for p in data.get('Playlists')])
+    tracks = data.get('Tracks')
+    playlists = data.get('Playlists')
 
 
 if __name__ == '__main__':
