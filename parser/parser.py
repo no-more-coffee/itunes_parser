@@ -2,6 +2,7 @@ import sys
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
+import pandas as pd
 from dateutil.parser import parse as date_parse
 
 type_parsers = {
@@ -64,6 +65,87 @@ def main(*args):
     tracks = data.get('Tracks')
     playlists = data.get('Playlists')
 
+    df_xml = pd.DataFrame.from_dict(tracks, orient='index')
+    df_xml = df_xml.fillna(0).astype({
+        'Track ID': 'int64',
+        'Name': 'string',
+        'Genre': 'category',
+        'Loved': 'boolean',
+        'Size': 'int64',
+        'Total Time': 'int64',
+        'Disc Number': 'int64',
+        'Disc Count': 'int64',
+        'Track Number': 'int64',
+        'Track Count': 'int64',
+        'Year': 'int64',
+        'Bit Rate': 'int64',
+        'Sample Rate': 'int64',
+        'Play Count': 'int64',
+    })
+    print(df_xml)
+
+
+"""
+>>> df_xml.dtypes
+Track ID                                   int64
+Name                                      object
+Artist                                    object
+Album Artist                              object
+Composer                                  object
+Album                                     object
+Genre                                   category
+Kind                                      object
+Size                                       int64
+Total Time                                 int64
+Disc Number                              float64
+Disc Count                               float64
+Track Number                             float64
+Track Count                              float64
+Year                                     float64
+Date Modified            datetime64[ns, tzutc()]
+Date Added               datetime64[ns, tzutc()]
+Bit Rate                                   int64
+Sample Rate                              float64
+Equalizer                                 object
+Play Count                               float64
+Play Date                                float64
+Play Date UTC            datetime64[ns, tzutc()]
+Release Date             datetime64[ns, tzutc()]
+Normalization                            float64
+Sort Album                                object
+Sort Artist                               object
+Sort Composer                             object
+Sort Name                                 object
+Persistent ID                             object
+Track Type                                object
+Purchased                                 object
+Location                                  object
+File Folder Count                          int64
+Library Folder Count                       int64
+Volume Adjustment                        float64
+Skip Count                               float64
+Skip Date                datetime64[ns, tzutc()]
+Comments                                  object
+Artwork Count                            float64
+BPM                                      float64
+Rating                                   float64
+Album Rating                             float64
+Album Rating Computed                     object
+Loved                                     object
+Sort Album Artist                         object
+Matched                                   object
+Rating Computed                           object
+Explicit                                  object
+Compilation                               object
+Work                                      object
+Part Of Gapless Album                     object
+Has Video                                 object
+HD                                        object
+Video Width                              float64
+Video Height                             float64
+Music Video                               object
+Disliked                                  object
+"""
 
 if __name__ == '__main__':
     main(*sys.argv[1:])
