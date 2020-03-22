@@ -1,5 +1,4 @@
 import sys
-from collections import deque
 from xml.etree import ElementTree
 
 from dateutil.parser import parse as date_parse
@@ -24,18 +23,19 @@ def pop_array_items(e):
     return [parse_value(e) for e in e]
 
 
-def pop_dict_items(d1):
-    d = deque(d1)
-    while d:
-        k = d.popleft()
+def pop_dict_items(dict_element):
+    it = iter(dict_element)
+    for k in it:
         assert k.tag == 'key'
 
-        v = d.popleft()
+        v = next(it)
         yield k.text, parse_value(v)
 
 
 def main(*args):
     library_xml_path, *_ = args
+
+    # TODO Implement iterparse
     tree = ElementTree.parse(library_xml_path)
     root = tree.getroot()
     root_dict = root[0]
