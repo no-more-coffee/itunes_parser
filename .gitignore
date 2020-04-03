@@ -123,3 +123,5 @@ api/files/*
 api/api/settings_local.py
 
 /api/static
+
+/.vscode
