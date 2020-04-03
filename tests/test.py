@@ -1,3 +1,4 @@
+import copy
 import datetime
 import importlib.resources
 import unittest
@@ -33,15 +34,31 @@ PLAYLISTS = [{
     'Name': 'All', 'Description': None, 'Playlist ID': 84983, 'Playlist Persistent ID': '212185231B0FDAA9',
     'All Items': True, 'Playlist Items': [{'Track ID': 5994}]
 }]
+TRACKS_WITH_NEWLINE_COMMENT = copy.deepcopy(TRACKS)
+TRACKS_WITH_NEWLINE_COMMENT['5994']['Comments'] = '\n\nMultiple lines comment\n\n'
 
 
 class TestParse(unittest.TestCase):
-    def test_list_int(self):
+    def test_simple_playlist(self):
         xml_str = importlib.resources.read_text('tests.fixtures', 'All.xml')
         root = ElementTree.fromstring(xml_str)
         root_dict = root[0]
+
         data = parse_value(root_dict)
         tracks = data.get('Tracks')
         self.assertDictEqual(tracks, TRACKS)
+
+        playlists = data.get('Playlists')
+        self.assertListEqual(playlists, PLAYLISTS)
+
+    def test_comments_with_new_lines(self):
+        xml_str = importlib.resources.read_text('tests.fixtures', 'NewLineComments.xml')
+        root = ElementTree.fromstring(xml_str)
+        root_dict = root[0]
+
+        data = parse_value(root_dict)
+        tracks = data.get('Tracks')
+        self.assertDictEqual(tracks, TRACKS_WITH_NEWLINE_COMMENT)
+
         playlists = data.get('Playlists')
         self.assertListEqual(playlists, PLAYLISTS)
