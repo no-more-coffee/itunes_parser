@@ -48,11 +48,9 @@ def get_playlists(parent: Element) -> Element:
     return get_element_for_name(parent, 'Playlists')
 
 
-def main(*args):
-    library_xml_path, *_ = args
-
+def main(xml_path):
     # TODO Implement iterparse
-    tree = ElementTree.parse(library_xml_path)
+    tree = ElementTree.parse(xml_path)
     root = tree.getroot()
     root_dict = root[0]
 
@@ -66,4 +64,5 @@ def main(*args):
 
 
 if __name__ == '__main__':
-    main(*sys.argv[1:])
+    _current_file, xml_path_argument, *_ = sys.argv
+    main(xml_path_argument)
